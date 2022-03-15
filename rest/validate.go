@@ -2,7 +2,6 @@ package rest
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"reflect"
 	"strings"
@@ -101,11 +100,8 @@ func addUniqueBinding(v *validator.Validate) {
 		// get the fields which need to be unique
 		match := strings.Split(fl.Param(), " ")
 		// check if value is a string
-		fmt.Println("Validing unique:", fl.FieldName(), fl.Field().Kind())
-
 		switch fl.Field().Kind() {
 		case reflect.String:
-			fmt.Println("Validating unique strings:", match, fl.FieldName())
 			// value of the field
 			value := fl.Field().String()
 			for _, s := range match {
@@ -120,13 +116,10 @@ func addUniqueBinding(v *validator.Validate) {
 				}
 			}
 		case reflect.Slice:
-			fmt.Println("Validating unique array indexes", fl.FieldName())
 			length := fl.Field().Len()
 			hash := make(map[interface{}]bool, 0)
 			for i := 0; i < length; i++ {
-				fmt.Println(hash)
 				value := fl.Field().Index(i)
-				fmt.Println(i, value, hash[value.Interface()])
 				if _, exists := hash[value.Interface()]; exists {
 					return false
 				}
