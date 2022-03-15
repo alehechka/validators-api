@@ -1,0 +1,21 @@
+{
+	"firstName": "John",
+	"lastName": "John",
+	"email": "jmark@example.com",
+	"phone": "+11234567890",
+	"countryCode": "US",
+	"productCode": "PC12345678",
+	"width": 101,
+	"height": -3,
+	"things": ["idk", "idk"],
+	"user": {
+		"name": "Adam",
+		"age": 19,
+		"comments": [
+			{
+				"text": "idk",
+				"type": "post"
+			}
+		]
+	}
+}
