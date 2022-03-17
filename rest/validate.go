@@ -3,17 +3,14 @@ package rest
 import (
 	"errors"
 	"net/http"
-	"reflect"
-	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
 )
 
 type Body struct {
 	FirstName   string   `json:"firstName" binding:"required"`
-	LastName    string   `json:"lastName" binding:"required,unique=FirstName"`
+	LastName    string   `json:"lastName" binding:"required,uniquefield=FirstName"`
 	Email       string   `json:"email" binding:"required,email"`
 	Phone       string   `json:"phone" binding:"required,e164"`
 	CountryCode string   `json:"countryCode" binding:"required,iso3166_1_alpha2"`
@@ -50,10 +47,7 @@ func getErrorMsg(fe validator.FieldError) string {
 		return "Should be greater than " + fe.Param()
 	case "notoneof":
 		return "Value cannot be one of the following: " + fe.Param()
-	case "unique":
-		if fe.Kind() == reflect.Slice {
-			return "All values in array must be unique"
-		}
+	case "uniquefield":
 		return "Value must be different than " + fe.Param()
 	}
 
@@ -70,64 +64,6 @@ func createErrors(err error) []ErrorMsg {
 		return out
 	}
 	return nil
-}
-
-func AddValidators() {
-	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
-		addNotOneOfBinding(v)
-		addUniqueBinding(v)
-	}
-}
-
-func addNotOneOfBinding(v *validator.Validate) {
-	v.RegisterValidation("notoneof", func(fl validator.FieldLevel) bool {
-		// split values using ` `. eg. notoneof=bob rob job
-		match := strings.Split(fl.Param(), " ")
-		// convert field value to string
-		value := fl.Field().String()
-		for _, s := range match {
-			// match value with struct filed tag
-			if s == value {
-				return false
-			}
-		}
-		return true
-	})
-}
-
-func addUniqueBinding(v *validator.Validate) {
-	v.RegisterValidation("unique", func(fl validator.FieldLevel) bool {
-		// get the fields which need to be unique
-		match := strings.Split(fl.Param(), " ")
-		// check if value is a string
-		switch fl.Field().Kind() {
-		case reflect.String:
-			// value of the field
-			value := fl.Field().String()
-			for _, s := range match {
-				// access to struct and getting value by field name
-				fs := fl.Top().FieldByName(s)
-				// check only for string validation
-				if fs.Kind() == reflect.String {
-					// check value of both fields
-					if value == fs.String() {
-						return false
-					}
-				}
-			}
-		case reflect.Slice:
-			length := fl.Field().Len()
-			hash := make(map[interface{}]bool, 0)
-			for i := 0; i < length; i++ {
-				value := fl.Field().Index(i)
-				if _, exists := hash[value.Interface()]; exists {
-					return false
-				}
-				hash[value.Interface()] = true
-			}
-		}
-		return true
-	})
 }
 
 func validate(c *gin.Context) {
