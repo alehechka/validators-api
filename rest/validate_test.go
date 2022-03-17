@@ -22,7 +22,7 @@ var validBody = rest.Body{
 		Age:  19,
 		Comments: []rest.Comment{
 			{
-				Text: "idk",
+				Text: "solid",
 				Type: "post",
 			},
 		},

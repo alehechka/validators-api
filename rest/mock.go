@@ -22,6 +22,7 @@ func MockRequest(httpMethod string, endpoint string, body interface{}) *httptest
 	fmt.Println(string(bodyJSON))
 
 	req, _ := http.NewRequest(httpMethod, endpoint, bytes.NewBuffer(bodyJSON))
+	req.Header.Set("Content-Type", "application/json")
 	router.ServeHTTP(w, req)
 
 	fmt.Println(w.Body.String())
