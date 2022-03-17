@@ -27,6 +27,12 @@ type User struct {
 	Comments []Comment `json:"comments" binding:"required,min=1,dive"`
 }
 
+type Object struct {
+	Thing1 string `json:"thing1" binding:"required_without_all=Thing2 Thing3"`
+	Thing2 uint   `json:"thing2" binding:"required_without_all=Thing1 Thing3"`
+	Thing3 string `json:"thing3" binding:"required_without_all=Thing1 Thing2"`
+}
+
 type Comment struct {
 	Text string `json:"text" binding:"required,max=255,notoneof=idk idc"`
 	Type string `json:"type" binding:"required,oneof=post nested"`
@@ -73,5 +79,5 @@ func validate(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusAccepted, &body)
+	c.AbortWithStatus(http.StatusOK)
 }

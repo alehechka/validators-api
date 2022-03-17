@@ -1,7 +1,10 @@
-package main
+package rest_test
 
 import (
+	"testing"
+
 	"github.com/alehechka/validators-api/rest"
+	"github.com/stretchr/testify/assert"
 )
 
 var validBody = rest.Body{
@@ -26,11 +29,9 @@ var validBody = rest.Body{
 	},
 }
 
-func main() {
+func Test_Validate(t *testing.T) {
+	w := rest.MockRequest("POST", "/validate", validBody)
 
-	// router := rest.SetupRouter()
-
-	// router.Run()
-
-	rest.MockRequest("POST", "/validate", validBody)
+	assert.Equal(t, 200, w.Code)
+	assert.Equal(t, "", w.Body.String())
 }
