@@ -28,9 +28,9 @@ var validBody = rest.Body{
 
 func main() {
 
-	// router := rest.SetupRouter()
+	router := rest.SetupRouter()
 
-	// router.Run()
+	router.Run()
 
-	rest.MockRequest("POST", "/validate", validBody)
+	// rest.MockRequest("POST", "/validate", validBody)
 }
