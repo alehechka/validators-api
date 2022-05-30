@@ -17,5 +17,6 @@
 				"type": "post"
 			}
 		]
-	}
+	},
+	"something": "idk"
 }
